@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from helpers.db_helpers import run_query
+import sys 
 
 app = Flask(__name__)
 
@@ -21,3 +22,22 @@ def poster_post():
   # check if the above is set, if the get has no value in the dictionary the data will return none because none is = to false, so use conditional to add an error if the value is none 
   if not poster_name:
     return jsonify('Could not process but understood the request'), 422
+  return jsonify('post added'), 201
+
+if len(sys.argv) >1:
+  mode=sys.argv[1]
+else:
+  print("Missing required mode arguments")
+  exit()
+
+if mode == 'testing':
+  from flask_cors import CORS
+  CORS(app)
+  app.run(debug=True)
+elif mode == 'production':
+  import bjoern
+  bjoern.run(app, "0.0.0.0", 5004)
+else:
+  print("must be either testing or production mode")
+
+
